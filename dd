@@ -1,0 +1,70 @@
+reptile-cursor/
+├── index.html
+├── style.css
+└── script.js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reptile Cursor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+canvas {
+  display: block;
+}
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const segments = [];
+const segmentLength = 20;
+const numSegments = 20;
+
+let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+
+for (let i = 0; i < numSegments; i++) {
+  segments.push({ x: mouse.x, y: mouse.y });
+}
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  segments[0].x += (mouse.x - segments[0].x) * 0.1;
+  segments[0].y += (mouse.y - segments[0].y) * 0.1;
+  for (let i = 1; i < segments.length; i++) {
+    let prev = segments[i - 1];
+    let current = segments[i];
+
+    current.x += (prev.x - current.x) * 0.2;
+    current.y += (prev.y - current.y) * 0.2;
+  }
+  ctx.strokeStyle = "lime";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(segments[0].x, segments[0].y);
+  for (let i = 1; i < segments.length; i++) {
+    ctx.lineTo(segments[i].x, segments[i].y);
+  }
+  ctx.stroke();
+
+  requestAnimationFrame(draw);
+}
+
+draw();
